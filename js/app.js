@@ -139,53 +139,37 @@ class App {
 		this._tracker = new CalorieTracker();
 		document
 			.getElementById('meal-form')
-			.addEventListener('submit', this._newMeal.bind(this));
+			.addEventListener('submit', this._newItem.bind(this, 'meal'));
 
 		document
 			.getElementById('workout-form')
-			.addEventListener('submit', this._newWorkOut.bind(this));
+			.addEventListener('submit', this._newItem.bind(this, 'workout'));
 	}
 
-	_newMeal(e) {
+	_newItem(type, e) {
 		e.preventDefault();
-		const name = document.getElementById('meal-name');
-		const calories = document.getElementById('meal-calories');
+		const name = document.getElementById(`${type}-name`);
+		const calories = document.getElementById(`${type}-calories`);
 
 		// validation
 		if (name.value === '' || calories.value === '') {
 			alert('Please Fill in all Fields');
 			return;
 		}
-		const meal = new Meal(name.value, +calories.value);
-		this._tracker.addMeal(meal);
 
-		name.value = '';
-		calories.value = '';
-
-		const collapseMeal = document.getElementById('collapse-meal');
-		const bsCollapse = new bootstrap.Collapse(collapseMeal, { toggle: true });
-	}
-
-	_newWorkOut(e) {
-		e.preventDefault();
-		const name = document.getElementById('workout-name');
-		const calories = document.getElementById('workout-calories');
-
-		// validation
-		if (name.value === '' || calories.value === '') {
-			alert('Please Fill in all Fields');
-			return;
+		if (type === 'meal') {
+			const meal = new Meal(name.value, +calories.value);
+			this._tracker.addMeal(meal);
+		} else {
+			const workout = new Workout(name.value, +calories.value);
+			this._tracker.addWorkout(workout);
 		}
-		const workOut = new Meal(name.value, +calories.value);
-		this._tracker.addWorkout(workOut);
 
 		name.value = '';
 		calories.value = '';
 
-		const collapseWorkOut = document.getElementById('collapse-workout');
-		const bsCollapse = new bootstrap.Collapse(collapseWorkOut, {
-			toggle: true,
-		});
+		const collapseItem = document.getElementById(`collapse-${type}`);
+		const bsCollapse = new bootstrap.Collapse(collapseItem, { toggle: true });
 	}
 }
 
