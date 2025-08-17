@@ -2,7 +2,7 @@ class CalorieTracker {
 	#calorieLimit = Storage.getCalorieLimit();
 	#totalCalories = Storage.getTotalCalorie(0);
 	#meals = Storage.getMeals();
-	#workouts = [];
+	#workouts = Storage.getWorkouts();
 	constructor() {
 		this._displayCaloriesTotal();
 		this._displayCaloriesLimit();
@@ -26,6 +26,7 @@ class CalorieTracker {
 		this.#workouts.push(workout);
 		this.#totalCalories -= workout.calories;
 		Storage.updateTotalCalories(this.#totalCalories);
+		Storage.saveWorkout(workout);
 		this._displayNewWorkout(workout);
 		this._render();
 	}
@@ -70,6 +71,7 @@ class CalorieTracker {
 
 	loadItems() {
 		this.#meals.forEach((meal) => this._displayNewMeal(meal));
+		this.#workouts.forEach((workout) => this._displayNewWorkout(workout));
 	}
 
 	get caloriesLimit() {
@@ -270,6 +272,20 @@ class Storage {
 		const meals = this.getMeals();
 		meals.push(meal);
 		localStorage.setItem('meals', JSON.stringify(meals));
+	}
+	static getWorkouts() {
+		let workouts;
+		if (localStorage.getItem('workouts') === null) {
+			workouts = [];
+		} else {
+			workouts = JSON.parse(localStorage.getItem('workouts'));
+		}
+		return workouts;
+	}
+	static saveWorkout(workout) {
+		const workouts = this.getWorkouts();
+		workouts.push(workout);
+		localStorage.setItem('workouts', JSON.stringify(workouts));
 	}
 }
 class App {
